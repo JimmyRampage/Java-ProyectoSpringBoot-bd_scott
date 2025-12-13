@@ -1,0 +1,15 @@
+CREATE DATABASE  IF NOT EXISTS `bd_scott`;
+
+USE `bd_scott`;
+
+DROP TABLE IF EXISTS `salgrade`;
+
+CREATE TABLE `salgrade` (
+  `NIVEL` int DEFAULT NULL,
+  `LOSAL` float DEFAULT NULL,
+  `HISAL` float DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_spanish2_ci;
+
+LOCK TABLES `salgrade` WRITE;
+INSERT INTO `salgrade` VALUES (1,0,1500),(2,1501,3000),(3,3001,15000);
+UNLOCK TABLES;

@@ -1,0 +1,43 @@
+<nav
+  aria-label="Page navigation"
+  class="mt-4"
+  th:if="${isPaginated == true and productPage != null and productPage.totalPages > 0}"
+>
+  <ul class="pagination justify-content-center">
+    <li class="page-item" th:classappend="${productPage.first} ? 'disabled'">
+      <a
+        class="page-link"
+        th:href="@{/products(page=${productPage.number - 1}, size=${productPage.size})}"
+        tabindex="-1"
+        >Anterior</a
+      >
+    </li>
+
+    <li
+      class="page-item"
+      th:each="i : ${#numbers.sequence(1, productPage.totalPages)}"
+      th:classappend="${i == productPage.number + 1} ? 'active'"
+    >
+      <a
+        class="page-link"
+        th:href="@{/products(page=${i - 1}, size=${productPage.size})}"
+        th:text="${i}"
+        >1</a
+      >
+    </li>
+
+    <li class="page-item" th:classappend="${productPage.last} ? 'disabled'">
+      <a
+        class="page-link"
+        th:href="@{/products(page=${productPage.number + 1}, size=${productPage.size})}"
+        >Siguiente</a
+      >
+    </li>
+  </ul>
+
+  <div class="text-center text-muted">
+    <small
+      th:text="'Página ' + ${productPage.number + 1} + ' de ' + ${productPage.totalPages}"
+    ></small>
+  </div>
+</nav>

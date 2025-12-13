@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+  <!-- NAVBAR START -->
+  <nav th:fragment="navbar" class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">BD_SCOTT</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+          <!-- HOME -->
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
+          </li>
+
+          <!-- DROPDOWN EMP -->
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Employees
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" th:href="@{/emp/list}">List Employees</a></li>
+              <li><hr class="dropdown-divider" /></li>
+              <li><a class="dropdown-item" th:href="@{/emp/createEmp}">Create Employee</a></li>
+            </ul>
+          </li>
+
+          <!-- DROPDOWN DEPT -->
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Departments
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" th:href="@{/}">List Departments</a></li>
+              <li><a class="dropdown-item" href="#">Search Department/s</a></li>
+              <li><hr class="dropdown-divider" /></li>
+              <li><a class="dropdown-item" href="#">Update Department</a></li>
+              <li><hr class="dropdown-divider" /></li>
+              <li><a class="dropdown-item" href="#">Delete Department</a></li>
+            </ul>
+          </li>
+
+          <!-- ABOUT US -->
+          <li class="nav-item">
+            <a class="nav-link disabled" th:href="@{/about}" aria-disabled="true">About Us</a>
+          </li>
+
+        </ul>
+
+        <!-- <form class="d-flex" role="search">
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form> -->
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- NAVBAR END -->
+</body>
+</html>
