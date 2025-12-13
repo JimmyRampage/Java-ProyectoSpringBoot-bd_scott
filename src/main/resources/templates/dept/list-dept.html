@@ -22,15 +22,15 @@
 
     <!-- HEADER -->
     <div
-      th:replace="~{fragments/header :: header(title = 'Listado Empleados')}"
+      th:replace="~{fragments/header :: header(title = 'Department List & Search')}"
     ></div>
 
-    <!-- Boton -->
+    <!-- Button Create Dept -->
     <div class="container my-2">
       <div class="row">
         <div class="col text-center">
-          <a th:href="@{/emp/createEmp}" class="btn btn-primary"
-            >Create New Emp</a
+          <a th:href="@{/dept/createDept}" class="btn btn-primary"
+            >Create New Dept</a
           >
         </div>
       </div>
@@ -47,44 +47,33 @@
       </div>
     </div>
 
+    <!-- Buscador -->
     <div class="container">
       <div class="row my-2">
         <form
-          th:action="@{/emp/list}"
+          th:action="@{/dept/list}"
           method="GET"
           class="row g-3 align-items-center justify-content-center"
         >
           <div class="col-auto">
             <select name="type" class="form-select">
               <option
-                value="ename"
-                th:selected="${tipoSeleccionado == 'ename'}"
-              >
-                Ename
-              </option>
-              <option
-                value="job"
-                th:selected="${tipoSeleccionado == 'job'}"
-                >
-                Job
-              </option>
-              <option
-                value="sal"
-                th:selected="${tipoSeleccionado == 'sal'}"
-                >
-                Salary Min
-              </option>
-              <option
-                value="comm"
-                th:selected="${tipoSeleccionado == 'comm'}"
-                >
-                Commission Min
-              </option>
-              <option
                 value="deptno"
                 th:selected="${tipoSeleccionado == 'deptno'}"
+              >
+                Deptno
+              </option>
+              <option
+                value="dname"
+                th:selected="${tipoSeleccionado == 'dname'}"
                 >
-                Department No.
+                Dname
+              </option>
+              <option
+                value="loc"
+                th:selected="${tipoSeleccionado == 'loc'}"
+                >
+                Loc
               </option>
             </select>
           </div>
@@ -99,56 +88,40 @@
           </div>
           <div class="col-auto">
             <button type="submit" class="btn btn-primary">Search</button>
-            <a th:href="@{/emp/list}" class="btn btn-secondary">Clean</a>
+            <a th:href="@{/dept/list}" class="btn btn-secondary">Clean</a>
           </div>
         </form>
       </div>
     </div>
 
+    <!-- Tabla resultados -->
     <div class="container">
       <div class="row">
         <table class="table table-striped">
           <thead>
             <tr class="table-primary">
-              <th>EMPNO</th>
-              <th>ENAME</th>
-              <th>JOB</th>
-              <th>MGR</th>
-              <th>SAL</th>
-              <th>COMM</th>
-              <th>DEPTNO</th>
-              <th>HIREDATE</th>
+              <th>DPTNO</th>
+              <th>DNAME</th>
+              <th>LOC</th>
               <th>ACTIONS</th>
             </tr>
           </thead>
           <tbody>
-            <tr th:each="emp : ${empPage.content}">
-              <td th:text="${emp.empno}"></td>
-              <td th:text="${emp.ename}"></td>
-              <td th:text="${emp.job}"></td>
-              <!-- Ternario en caso de null -->
-              <td
-                th:text="${emp.manager != null ? emp.manager.empno : 'N/A'}"
-              ></td>
-              <td th:text="${emp.sal}"></td>
-              <td th:text="${emp.comm != null ? emp.comm : '0.0'}"></td>
-              <!-- Alternativa en caso de null -->
-              <td
-                th:text="${emp.deptno?.deptno + ' (' + emp.deptno?.dname + ')'}"
-              ></td>
-              <td
-                th:text="${#temporals.format(emp.hiredate, 'dd/MM/yyyy')}"
-              ></td>
+            <tr th:each="dept : ${deptPage.content}">
+              <td th:text="${dept.deptno}"></td>
+              <td th:text="${dept.dname}"></td>
+              <td th:text="${dept.loc != null ? dept.loc : 'N/A'}"></td>
+              <!-- ACTIONS -->
               <td>
                 <!-- Update -->
                 <a
-                  th:href="@{/emp/edit/{id} (id=${emp.empno})}"
+                  th:href="@{/dept/edit/{id} (id=${dept.deptno})}"
                   class="text-warning"
                   ><i class="fa-regular fa-pen-to-square"></i
                 ></a>
                 <!-- Delete -->
                 <a
-                  th:href="@{/emp/delete/{id} (id=${emp.empno})}"
+                  th:href="@{/dept/delete/{id} (id=${dept.deptno})}"
                   onclick="return confirm('¿Estas seguro?')"
                   class="text-danger"
                   ><i class="fa-solid fa-ban"></i
@@ -164,15 +137,15 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <nav aria-label="Page navigation" th:if="${empPage.totalPages > 0}">
+          <nav aria-label="Page navigation" th:if="${deptPage.totalPages > 0}">
             <ul class="pagination justify-content-center">
               <li
                 class="page-item"
-                th:classappend="${empPage.first} ? 'disabled'"
+                th:classappend="${deptPage.first} ? 'disabled'"
               >
                 <a
                   class="page-link"
-                  th:href="@{/emp/list(page=${empPage.number - 1}, size=${empPage.size})}"
+                  th:href="@{/emp/list(page=${deptPage.number - 1}, size=${deptPage.size})}"
                 >
                   Anterior
                 </a>
@@ -180,18 +153,18 @@
 
               <li class="page-item disabled">
                 <a class="page-link" href="#">
-                  Página <span th:text="${empPage.number + 1}"></span> de
-                  <span th:text="${empPage.totalPages}"></span>
+                  Página <span th:text="${deptPage.number + 1}"></span> de
+                  <span th:text="${deptPage.totalPages}"></span>
                 </a>
               </li>
 
               <li
                 class="page-item"
-                th:classappend="${empPage.last} ? 'disabled'"
+                th:classappend="${deptPage.last} ? 'disabled'"
               >
                 <a
                   class="page-link"
-                  th:href="@{/emp/list(page=${empPage.number + 1}, size=${empPage.size})}"
+                  th:href="@{/dept/list(page=${deptPage.number + 1}, size=${deptPage.size})}"
                 >
                   Siguiente
                 </a>

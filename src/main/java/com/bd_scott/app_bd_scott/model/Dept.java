@@ -2,22 +2,25 @@ package com.bd_scott.app_bd_scott.model;
 
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 public class Dept {
 
     @Id
     @Column(name = "deptno", nullable = false)
+    //@NotNull(message = "El 'DEPTNO' no puede ser nulo")
+    //@Min(value = 1, message = "El 'DEPTNO' debe ser mayor que 0")
     private Integer deptno;
 
     @Column(name = "dname", length = 45, nullable = false)
+    @NotEmpty(message = "El 'DNAME' no puede estar vacío")
+    @Size(min = 2, max = 45, message = "El 'DNAME' debe tener como mínimo 2 y como máximo 45 caracteres")
     private String dname;
 
     @Column(name = "loc", length = 45)
+    @Size(min = 2, max = 45, message = "El 'LOC' debe tener como mínimo 2 y como máximo 45 caracteres")
     private String loc;
 
     @OneToMany(mappedBy = "dept")

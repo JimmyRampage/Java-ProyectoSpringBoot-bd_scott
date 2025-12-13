@@ -16,4 +16,5 @@ public interface DeptService {
     Dept saveNewDept(Dept newDept);
     Optional<Dept> findById(Integer id);
     void deleteById(Integer id);
+    Page<Dept> findByCriteria(String type, String value, Pageable pageable);
 }

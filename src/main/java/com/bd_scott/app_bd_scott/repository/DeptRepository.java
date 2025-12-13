@@ -2,6 +2,8 @@ package com.bd_scott.app_bd_scott.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,4 +15,8 @@ public interface DeptRepository extends JpaRepository<Dept, Integer>{
     Integer findMaxDeptno();
 
     List<Dept> findDistinctBy();
+
+    Page<Dept> findDeptByDeptno(Integer deptno, Pageable pageable);
+    Page<Dept> findByDnameIgnoreCaseContaining(String dname, Pageable pageable);
+    Page<Dept> findByLocIgnoreCaseContaining(String loc, Pageable pageable);
 }

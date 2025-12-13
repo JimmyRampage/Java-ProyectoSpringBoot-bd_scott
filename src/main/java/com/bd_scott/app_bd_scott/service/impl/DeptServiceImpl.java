@@ -9,15 +9,19 @@ import org.springframework.stereotype.Service;
 
 import com.bd_scott.app_bd_scott.model.Dept;
 import com.bd_scott.app_bd_scott.repository.DeptRepository;
+import com.bd_scott.app_bd_scott.repository.EmpRepository;
 import com.bd_scott.app_bd_scott.service.DeptService;
 
 @Service
 public class DeptServiceImpl implements DeptService{
 
+    private final EmpRepository empRepository;
+
     private final DeptRepository deptRepository;
 
-    public DeptServiceImpl(DeptRepository deptRepository) {
+    public DeptServiceImpl(DeptRepository deptRepository, EmpRepository empRepository) {
         this.deptRepository = deptRepository;
+        this.empRepository = empRepository;
     }
 
     @Override
@@ -57,6 +61,22 @@ public class DeptServiceImpl implements DeptService{
     @Override
     public List<Dept> findDistinctBy() {
         return deptRepository.findDistinctBy();
+    }
+
+    @Override
+    public Page<Dept> findByCriteria(String type, String value, Pageable pageable) {
+        switch (type) {
+            case "deptno":
+                return deptRepository.findDeptByDeptno(Integer.parseInt(value), pageable);
+            case "dname":
+                return deptRepository.findByDnameIgnoreCaseContaining(value, pageable);
+            case "loc":
+                return deptRepository.findByLocIgnoreCaseContaining(value, pageable);
+            default:
+                break;
+        }
+        return deptRepository.findAll(pageable);
+
     }
 
 }

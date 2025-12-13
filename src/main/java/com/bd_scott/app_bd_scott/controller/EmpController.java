@@ -95,7 +95,7 @@ public class EmpController {
     @PostMapping("/update")
     public String updateEmployee(@Valid @ModelAttribute("emp") Emp emp, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("editMode", "true"); // Importante mantener el modo
+            model.addAttribute("editMode", "true");
             model.addAttribute("emps", empService.findAll());
             model.addAttribute("depts", deptService.findDistinctBy());
             return "emp/form-emp";

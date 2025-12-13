@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- BootStrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <title>Inicio</title>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <!-- NAVBAR -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- HEADER -->
+    <th:block th:with="tituloPagina=${editMode == 'true' ? 'Edit Department' : 'Create new Depatrment'}">
+      <div th:replace="~{fragments/header :: header(title=${tituloPagina})}"></div>
+    </th:block>
+
+    <main>
+      <div class="container">
+        <form
+          th:action="${editMode == 'true'} ? @{/dept/update} : @{/dept/saveDept}"
+          th:method="POST"
+          th:object="${dept}">
+          <!-- Errores -->
+          <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
+            <strong>Por favor corrija los siguientes errores:</strong>
+            <ul>
+              <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+          </div>
+          <!-- Deptno Dname Loc -->
+          <div class="row" >
+            <!-- Deptno -->
+            <div class="mb-3 col-4" th:if="${editMode == 'true'}">
+              <label for="inputDeptno" class="form-label">Deptno</label>
+              <input
+                type="number"
+                min="0"
+                class="form-control"
+                id="inputDeptno"
+                th:field="*{deptno}"
+                th:readonly="${editMode == 'true'}"
+                aria-describedby="deptnoHelp"
+              />
+              <div id="deptnoHelp" class="form-text">Number of the Department</div>
+            </div>
+            <!-- Dname -->
+            <div class="mb-3 col-4">
+              <label for="inputEname" class="form-label">Dname</label>
+              <input
+                type="text"
+                class="form-control"
+                id="inputDname"
+                th:field="*{dname}"
+                th:errorclass="is-invalid"
+                th:validclass="is-valid"
+                aria-describedby="dnameHelp"
+              />
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('dname')}" th:errors="*{dname}"></div>
+              <div id="dnameHelp" class="form-text">Name of the Department</div>
+            </div>
+            <!-- Loc -->
+            <div class="mb-3 col-4">
+              <label for="inputLoc" class="form-label">Loc</label>
+              <input
+                type="text"
+                class="form-control"
+                id="inputLoc"
+                th:field="*{loc}"
+                th:errorclass="is-invalid"
+                th:validclass="is-valid"
+                aria-describedby="locHelp"
+              />
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('loc')}" th:errors="*{loc}"></div>
+              <div id="locHelp" class="form-text">Location of the Department</div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" th:text="${editMode == 'true' ? 'Update Department' : 'Create Department'}"></button>
+        </form>
+      </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <!-- BootStrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
