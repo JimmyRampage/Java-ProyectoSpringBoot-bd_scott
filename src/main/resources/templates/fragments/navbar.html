@@ -5,7 +5,7 @@
   <!-- NAVBAR START -->
   <nav th:fragment="navbar" class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">BD_SCOTT</a>
+      <a class="navbar-brand" th:href="@{/}">BD_SCOTT</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -55,12 +55,9 @@
               Departments
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" th:href="@{/}">List Departments</a></li>
-              <li><a class="dropdown-item" href="#">Search Department/s</a></li>
+              <li><a class="dropdown-item" th:href="@{/dept/list}">List Departments</a></li>
               <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" href="#">Update Department</a></li>
-              <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" href="#">Delete Department</a></li>
+              <li><a class="dropdown-item" th:href="@{/dept/createDept}">Create Department</a></li>
             </ul>
           </li>
 
@@ -70,16 +67,6 @@
           </li>
 
         </ul>
-
-        <!-- <form class="d-flex" role="search">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form> -->
 
       </div>
     </div>

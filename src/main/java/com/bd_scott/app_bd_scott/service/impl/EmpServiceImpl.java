@@ -23,6 +23,12 @@ public class EmpServiceImpl implements EmpService{
 
     @Override
     public void deleteById(Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id no puede ser null");
+        }
+        if (!empRepository.existsById(id)) {
+            throw new RuntimeException("Empleado no encontrado para eliminar");
+        }
         empRepository.deleteById(id);
     }
 
@@ -58,7 +64,6 @@ public class EmpServiceImpl implements EmpService{
         return empRepository.save(emp);
     }
 
-
     @Override
     public List<Emp> findByDept(Dept dept) {
         return empRepository.findByDept(dept);
@@ -66,33 +71,18 @@ public class EmpServiceImpl implements EmpService{
 
     @Override
     public Page<Emp> findByCriteria(String type, String value, Pageable pageable) {
-        switch (type) {
-            case "ename":
-                return empRepository.findByEnameIgnoreCaseContaining(value, pageable);
-            case "job":
-                return empRepository.findByJobIgnoreCaseContaining(value, pageable);
-            case "sal":
-                try {
-                    return empRepository.findBySalGreaterThanEqual(Float.parseFloat(value), pageable);
-                } catch (NumberFormatException e) {
-                    return Page.empty();
-                }
-            case "comm":
-                try {
-                    return empRepository.findByCommGreaterThanEqual(Float.parseFloat(value), pageable);
-                } catch (NumberFormatException e) {
-                    return Page.empty();
-                }
-            case "deptno":
-                try {
-                    return empRepository.findByDept_Deptno(Integer.parseInt(value), pageable);
-                } catch (NumberFormatException e) {
-                    return Page.empty();
-                }
-            default:
-                break;
+        if (value == null || type == null) return Page.empty();
+        try {
+            return switch (type.toLowerCase()) {
+                case "ename" -> empRepository.findByEnameIgnoreCaseContaining(value, pageable);
+                case "job" -> empRepository.findByJobIgnoreCaseContaining(value, pageable);
+                case "sal" -> empRepository.findBySalGreaterThanEqual(Float.parseFloat(value), pageable);
+                case "comm" -> empRepository.findByCommGreaterThanEqual(Float.parseFloat(value), pageable);
+                case "deptno" -> empRepository.findByDept_Deptno(Integer.parseInt(value), pageable);
+                default -> empRepository.findAll(pageable);
+            };
+        } catch (NumberFormatException e) {
+            return Page.empty();
         }
-        return empRepository.findAll(pageable);
     }
-
 }

@@ -61,7 +61,6 @@ public class EmpController {
         model.addAttribute("editMode", "false");
         return "emp/form-emp";
     }
-    
 
     @PostMapping("/saveEmp")
     public String saveEmployee(@Valid
