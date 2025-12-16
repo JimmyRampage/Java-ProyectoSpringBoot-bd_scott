@@ -65,18 +65,17 @@ public class DeptServiceImpl implements DeptService{
 
     @Override
     public Page<Dept> findByCriteria(String type, String value, Pageable pageable) {
-        switch (type) {
-            case "deptno":
-                return deptRepository.findDeptByDeptno(Integer.parseInt(value), pageable);
-            case "dname":
-                return deptRepository.findByDnameIgnoreCaseContaining(value, pageable);
-            case "loc":
-                return deptRepository.findByLocIgnoreCaseContaining(value, pageable);
-            default:
-                break;
+        if (value == null || type == null) return Page.empty();
+        try {
+            return switch (type.toLowerCase()) {
+                case "deptno" -> deptRepository.findDeptByDeptno(Integer.parseInt(value), pageable);
+                case "dname" -> deptRepository.findByDnameIgnoreCaseContaining(value, pageable);
+                case "loc" -> deptRepository.findByLocIgnoreCaseContaining(value, pageable);
+                default -> deptRepository.findAll(pageable);
+            };
+        } catch (Exception e) {
+            return Page.empty();
         }
-        return deptRepository.findAll(pageable);
-
     }
 
 }

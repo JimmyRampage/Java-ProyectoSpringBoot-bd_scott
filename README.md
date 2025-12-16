@@ -2,6 +2,8 @@
 
 Proyecto de practica para aprender y consolidar los conocimientos con SpringBoot para el desarrollo web, utilizando la conocida bbdd bd_scott.
 
+---
+
 ## Parte 1: Creando la plantilla del proyecto
 
 * La base el proyecto se ha hecho con ![spring.initializr](https://start.spring.io/)
@@ -19,6 +21,8 @@ Proyecto de practica para aprender y consolidar los conocimientos con SpringBoot
   * `Thymeleaf`: Se utiliza para el `Server-Side Rendering` (`SSR`). A diferencia de frameworks como `React` o `Angular` que renderizan en el navegador, `Thymeleaf` genera el `HTML` en el servidor antes de enviarlo al cliente.
 
   * `Validation`: Provee un mecanismo declarativo para asegurar la Integridad de los Datos que entran a la aplicación. Permite usar anotaciones en las clases `model` como `@NotNull`, `@Size`, `@Min`, `@Max`, etc. Su integracion a los `Controllers` es mediante el uso de la anotación `@Valid`. Esta dependencia evitar llenar la lógica con bloques `if-else`.
+
+---
 
 ## Parte 2: Creando el Modelo
 
@@ -176,6 +180,8 @@ public class Emp {
   * Diferencia con `@OneToMany`: El ciclo de vida depende totalmente del padre. Si borras al padre, desaparecen los elementos de la colección automáticamente sin necesidad de configurar cascadas complejas.
 
 * `@Version`: Optimistic Locking. Agrega control de concurrencia optimista. Cada vez que actualizas la entidad, JPA incrementa este número automáticamente. Si dos usuarios intentan guardar la misma entidad al mismo tiempo, el segundo fallará con una `OptimisticLockException` porque el número de versión ya no coincidirá.
+
+---
 
 ## Parte 3: Creando el Repositorio
 
@@ -380,6 +386,8 @@ Soluciona el famoso problema `N+1 Selects`. Si al traer `Emp` también quieres t
 List<Emp> findByJob(String job);
 ```
 
+---
+
 ## Parte 4: Creando el Servicio Interface `EmpService` y su implementacion `EmpServiceImpl`
 
 En la arquitectura de `Spring Boot`, el `Service Layer` es el corazón de la lógica de negocio (`Business Logic`). Es el intermediario que orquesta el flujo de datos entre el `Controller` (que recibe la petición `HTTP`) y el `Repository` (que habla con la base de datos).
@@ -581,6 +589,8 @@ public class EmpServiceImpl implements EmpService {
     // ... resto de métodos
 }
 ```
+
+---
 
 ## Parte 5: El controllador `EmpController`
 
@@ -939,7 +949,231 @@ La Solucion:
 
 ```html
 <form action="..." method="post">
-    <input type="hidden" name="_csrf" value="a4f3-g5h6-..." /> 
+    <input type="hidden" name="_csrf" value="a4f3-g5h6-..." />
     ...
 </form>
 ```
+
+---
+
+## Parte 6: `FrontEnd` con `Thymeleaf`
+
+### Estructura y Modularidad `Fragments`
+
+* `th:fragment="nombre"`: Define un bloque de código reutilizable.
+  * Se le pueden pasar parametos como `th:fragment="header(title)"`
+
+* `th:replace="~{ruta :: fragmento}"`: Reemplaza la etiqueta actual por el fragmento invocado. Es lo que uso para inyectar el navbar en cada página.
+  * Ej: `th:replace="~{fragments/header :: header}"`
+  * Tambien puedes pasar argumentos: `th:replace="~{fragments/header :: header(title='Inicio')}"`
+
+### Navegacion y URLs
+
+* `th:href="@{/ruta}"`: Genera URLs relativas al contexto de la aplicación.
+  * Si la app se despliega en `miservidor.com/miapp/`, `Thymeleaf` agrega `/miapp` automáticamente. Sin esto, tus enlaces se romperían en producción.
+  * Permite parámetros de consulta: `@{/emp/list(page=1, size=10)}` genera `/emp/list?page=1&size=10`.
+
+* `th:action="@{/ruta}"`: Igual que `href`, pero para el atributo action de los formularios `HTML` (`<form>`).
+
+### Renderizado de Texto y Datos
+
+* `th:text="${variable}"`: Reemplaza el contenido de la etiqueta con el valor de la variable. Escapa caracteres especiales (`XSS protection`) por defecto.
+  * Técnicas usadas en el código:
+    * Ternario: `${condicion ? 'Si' : 'No'}`.
+    * Safe Navigation (`?.`): `th:text="${emp.deptno?.dname}"`. Si deptno es null, no lanza error, simplemente no imprime nada.
+    * Concatenación: `th:text="${m.ename + ' (' + m.empno + ')'}"`.
+
+* `th:object="${objeto}"`: Vincula un formulario a un objeto `Java` (`Command Object`).
+  * Efecto: Establece el contexto para usar `*{...}`.
+
+* `th:field="*{propiedad}"`: Vincula un input, select o textarea a una propiedad del objeto definido en `th:object`.
+  * Magia: Asigna automáticamente el `id`, `name`, y `value`. Si hay un error de validación, conserva el valor incorrecto para que el usuario no tenga que reescribirlo.
+
+### Control de Flujo y Lógica
+
+* `th:if="${condicion}"`: Renderiza la etiqueta solo si la condición es verdadera.
+  * Ej: `th:if="${msg != null}"` para mostrar alertas de éxito.
+
+* `th:each="item : ${lista}"`: Itera sobre una lista (bucle `for-each`). Repite la etiqueta `HTML` por cada elemento.
+  * Ej: `th:each="emp : ${empPage.content}"` para llenar la tabla.
+
+* `th:block`: Es un contenedor "fantasma". `Thymeleaf` procesa lo que hay dentro, pero la etiqueta `<th:block>` desaparece en el HTML final.
+  * Ej: Lo use para definir variables locales (`th:with`) antes de incluir el `header`
+
+### Manipulación de Atributos HTML
+
+* `th:classappend="${condicion} ? 'clase-extra'"`: Añade una clase CSS si se cumple la condición, sin borrar las clases existentes.
+  * Ej: Poner disabled en los botones de paginación.
+
+* `th:value="${valor}"`: Establece el atributo value de un input estándar (cuando no usas `th:field`).
+
+* `th:selected="${condicion}"`: Marca una opción (`<option>`) como seleccionada en un desplegable si la condición es `true`.
+
+* `th:readonly="${condicion}"`: Hace que un input sea de solo lectura dinámicamente.
+  * Ej: Bloquear el campo `empno` en modo edición.
+
+### Validaciones y Utilidades
+
+* `#fields.hasErrors('*')`: Objeto utilitario para verificar si hay errores de validación (`BindingResult`).
+
+* `th:errors="*{campo}"`: Muestra el mensaje de error específico asociado a un campo.
+
+* `th:errorclass="is-invalid"`: Aplica una clase CSS (ej. borde rojo de Bootstrap) al input solo si ese campo tiene errores.
+
+* `#temporals.format(fecha, 'patron')`: Formatea objetos de la `API` `java.time` (como `LocalDate`) directamente en la vista.
+
+### Anotaciones y Opciones Avanzadas en Thymeleaf
+
+#### Thymeleaf Layout Dialect (Patrón Decorator)
+
+Esta es la solución para evitar repetir código. A diferencia de `th:replace` (que solo incrusta fragmentos), el **Layout Dialect** invierte el control: las páginas hijas "decoran" a la página padre.
+
+* **Requisito Previo:** Necesitas agregar la dependencia en tu `pom.xml` (si no usas `spring-boot-starter-thymeleaf` completo o versiones antiguas):
+
+    ```xml
+    <dependency>
+        <groupId>nz.net.ultraq.thymeleaf</groupId>
+        <artifactId>thymeleaf-layout-dialect</artifactId>
+    </dependency>
+    ```
+
+* **Cómo funciona:**
+  * **Base (`base.html`):** Define la estructura esqueleto (`<html>`, `<head>`, `<body>`, scripts comunes). Define "huecos" donde las hijas inyectarán contenido.
+  * **Hija (`home.html`):** Solo contiene la data específica de esa vista.
+
+    ```html
+    <!DOCTYPE html>
+    <html xmlns:th="[http://www.thymeleaf.org](http://www.thymeleaf.org)"
+          xmlns:layout="[http://www.ultraq.net.nz/thymeleaf/layout](http://www.ultraq.net.nz/thymeleaf/layout)">
+    <head>
+        <title layout:title-pattern="$CONTENT_TITLE - AppBD">AppBD</title>
+        </head>
+    <body>
+        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+        <div layout:fragment="content"></div>
+
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+        <script src="...bootstrap.js..."></script>
+        <th:block layout:fragment="page-scripts"></th:block>
+    </body>
+    </html>
+    ```
+
+    ```html
+    <!DOCTYPE html>
+    <html layout:decorate="~{base}">
+    <head>
+        <title>Inicio</title> </head>
+    <body>
+        <div layout:fragment="content">
+            <h1>Bienvenido al Panel</h1>
+        </div>
+
+        <th:block layout:fragment="page-scripts">
+             <script> console.log('Solo en home'); </script>
+        </th:block>
+    </body>
+    </html>
+    ```
+
+#### Internacionalización (i18n)
+
+Permite que tu aplicación hable varios idiomas sin duplicar HTML. Spring busca los archivos `.properties` basándose en el header `Accept-Language` del navegador o un parámetro de locale (`?lang=es`).
+
+* **Estructura de Archivos:**
+  * `src/main/resources/messages.properties` (Inglés/Default)
+  * `src/main/resources/messages_es.properties` (Español)
+
+* **Uso Avanzado (Parámetros):**
+  Puedes pasar variables dinámicas a los mensajes de texto.
+
+  *En `messages.properties`:*
+  `welcome.user=Bienvenido, {0}! Hoy es {1}.`
+
+  *En el HTML:*
+
+    ```html
+    <p th:text="#{welcome.user(${session.user.name}, ${diaActual})}"></p>
+    ```
+
+#### Inlining (JavaScript y Texto)
+
+Es la capacidad de Thymeleaf de escribir valores directamente en el cuerpo del texto o dentro de bloques de script, escapando los caracteres automáticamente para evitar errores de sintaxis o seguridad.
+
+* **`[[...]]` vs `[(...)]`:** Ejemplo insertando `<b>Hola</b>`
+  * `[[${variable}]]`: Escapa el HTML (seguro, texto plano). Muestra `<b>Hola</b>`.
+  * `[(${variable})]`: Renderiza el HTML (peligroso si viene del usuario). Muestra **Hola**.
+
+* **JavaScript Inlining Inteligente:**
+    Thymeleaf es inteligente con los tipos de datos en JS. Si la variable es un String, le pone comillas. Si es número, no. Si es un objeto, intenta serializarlo a JSON.
+
+    ```html
+    <script th:inline="javascript">
+      // Thymeleaf añade comillas automáticamente si es String
+      const username = [[${user.name}]];
+
+      // Si es null, escribe 'null' (sin comillas) para no romper el JS
+      const userAge = [[${user.age}]];
+
+      // Serialización de objetos (útil para pasar datos a React/Vue/Charts)
+      const employeesJson = [[${listaEmpleados}]];
+    </script>
+    ```
+
+#### Variables de Estado (`iterStat`)
+
+Cuando usas `th:each`, Thymeleaf crea automáticamente un objeto de estado. Si no le pones nombre, se llama `nombreVariableStat`.
+
+* **Propiedades útiles de `iterStat`:**
+  * `.index`: Índice base 0 (0, 1, 2...).
+  * `.count`: Contador base 1 (1, 2, 3...).
+  * `.size`: Tamaño total de la lista.
+  * `.even` / `.odd`: Booleano, true si es par/impar.
+  * `.first` / `.last`: Booleano, útil para estilos CSS (ej. bordes redondeados solo en el primero y último).
+
+    ```html
+    <tr th:each="emp, stat : ${emps}"
+        th:classappend="${stat.even}? 'table-light' : ''">
+        <td th:text="${stat.count}"></td> <td th:text="${emp.ename}">
+            <span th:if="${stat.last}" class="badge bg-new">Nuevo</span>
+        </td>
+    </tr>
+    ```
+
+#### Switch / Case
+
+Funciona igual que en Java. Es preferible al `th:if` cuando tienes más de dos condiciones exclusivas, ya que Thymeleaf detiene la evaluación apenas encuentra una coincidencia (mejor rendimiento).
+
+* **El comodín `*`:** Siempre debe ir al final y actúa como el `default`.
+
+    ```html
+    <div th:switch="${emp.job}">
+      <span th:case="'PRESIDENT'" class="badge bg-danger">Jefe Supremo</span>
+      <span th:case="'MANAGER'"   class="badge bg-warning">Gerente</span>
+      <span th:case="'ANALYST'"   class="badge bg-info">Analista</span>
+      <span th:case="*" class="badge bg-secondary">Staff</span>
+    </div>
+    ```
+
+#### `th:attr` y Atributos Dinámicos
+
+A veces necesitas tocar atributos HTML que no son estándares o que Thymeleaf no mapea directamente (como `data-*` attributes para JavaScript).
+
+* **`th:attr`:** Permite asignar cualquier atributo.
+
+    ```html
+    <tr th:attr="data-id=${emp.id}, data-role=${emp.role}">...</tr>
+    ```
+
+* **`th:style` vs `th:styleappend`:**
+  * `th:style`: Reemplaza todo el estilo inline.
+  * `th:styleappend`: Agrega estilos sin borrar los que ya existan.
+
+    ```html
+    <div class="progress-bar"
+         th:style="'width: ' + ${porcentajeAvance} + '%'"
+         th:classappend="${porcentajeAvance > 90} ? 'bg-success' : 'bg-primary'">
+    </div>
+    ```
