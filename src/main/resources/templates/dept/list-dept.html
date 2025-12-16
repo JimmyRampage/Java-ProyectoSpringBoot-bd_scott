@@ -66,13 +66,10 @@
               <option
                 value="dname"
                 th:selected="${tipoSeleccionado == 'dname'}"
-                >
+              >
                 Dname
               </option>
-              <option
-                value="loc"
-                th:selected="${tipoSeleccionado == 'loc'}"
-                >
+              <option value="loc" th:selected="${tipoSeleccionado == 'loc'}">
                 Loc
               </option>
             </select>
@@ -96,7 +93,7 @@
 
     <!-- Tabla resultados -->
     <div class="container">
-      <div class="row">
+      <div class="row table-responsive">
         <table class="table table-striped">
           <thead>
             <tr class="table-primary">
@@ -121,11 +118,14 @@
                 ></a>
                 <!-- Delete -->
                 <a
-                  th:href="@{/dept/delete/{id} (id=${dept.deptno})}"
-                  onclick="return confirm('¿Estas seguro?')"
+                  href="#"
+                  th:data-url="@{/dept/delete/{id} (id=${dept.deptno})}"
+                  th:data-id-modal="'modalBorrarDept'"
+                  onclick="event.preventDefault(); openModalGeneric(this, this.getAttribute('data-id-modal'))"
                   class="text-danger"
-                  ><i class="fa-solid fa-ban"></i
-                ></a>
+                >
+                  <i class="fa-solid fa-ban"></i>
+                </a>
               </td>
             </tr>
           </tbody>
@@ -133,10 +133,18 @@
       </div>
     </div>
 
-    <div th:replace="~{fragments/pageable :: pageable(${deptPage}, '/dept/list')}"></div>
+    <!-- MODAL -->
+    <div
+      th:replace="~{fragments/modalDelete :: modal-confirmacion('modalBorrarDept', '¿Eliminar?', '¿Seguro que quieres borrar este departamento?') }"
+    ></div>
+    <!-- Pageable -->
+    <div
+      th:replace="~{fragments/pageable :: pageable(${deptPage}, '/dept/list')}"
+    ></div>
 
     <!-- Footer -->
     <div th:replace="~{fragments/footer :: footer}"></div>
+
     <!-- BootStrap -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

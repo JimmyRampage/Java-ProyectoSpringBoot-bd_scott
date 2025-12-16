@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div th:fragment="modal-confirmacion(idModal, titulo, mensaje)">
+      <dialog
+        th:id="${idModal}"
+        class="border-0 rounded-3 shadow p-4"
+        style="max-width: 400px"
+      >
+        <div class="text-center">
+          <h3 class="h5" th:text="${titulo}">Confirmar</h3>
+          <p class="text-muted" th:text="${mensaje}">¿Estás seguro?</p>
+
+          <div class="d-flex justify-content-center gap-2 mt-4">
+            <button
+              type="button"
+              class="btn btn-secondary btn-cerrar-modal"
+              th:data-target="${idModal}"
+            >
+              Cancelar
+            </button>
+            <a id="confirmBtn" href="#" class="btn btn-danger">Confirmar</a>
+          </div>
+        </div>
+      </dialog>
+
+      <script>
+        // Manejador para cerrar cualquier modal basado en su data-target
+        document.addEventListener("click", function (e) {
+          if (e.target && e.target.classList.contains("btn-cerrar-modal")) {
+            const modalId = e.target.getAttribute("data-target");
+            document.getElementById(modalId).close();
+          }
+        });
+
+        function openModalGeneric(element, idModal) {
+          const url = element.getAttribute("data-url");
+          const modal = document.getElementById(idModal);
+          const confirmBtn = modal.querySelector("#confirmBtn");
+
+          confirmBtn.setAttribute("href", url);
+          modal.showModal();
+        }
+      </script>
+    </div>
+  </body>
+</html>
