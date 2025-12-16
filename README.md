@@ -4,15 +4,26 @@ Proyecto de practica para aprender y consolidar los conocimientos con SpringBoot
 
 ---
 
+## Tabla de Contenidos
+
+1. [Creando la plantilla](#parte-1-creando-la-plantilla-del-proyecto)
+2. [El Modelo de Datos](#parte-2-creando-el-modelo)
+3. [Capa de Datos (Repository)](#parte-3-creando-el-repositorio)
+4. [Lógica de Negocio (Service)](#parte-4-creando-el-servicio-interface-empservice-y-su-implementacion-empserviceimpl)
+5. [Capa Web (Controller)](#parte-5-el-controllador-empcontroller)
+6. [Frontend (Thymeleaf)](#parte-6-frontend-con-thymeleaf)
+
+---
+
 ## Parte 1: Creando la plantilla del proyecto
 
 * La base el proyecto se ha hecho con ![spring.initializr](https://start.spring.io/)
 
 * Las dependencias instaladas son:
 
-  * `Spring Data JPA`: Facilita la interaccion con la base de datos, mediante la implementacion de `JpaRepository` y las `Query Methods`. Tambien facilita las operaciones de Pagination y Sorting sin escribir sql. Todo mediante `Hibernate` que es quien mueve loshilos detas de `JPA`.
+  * `Spring Data JPA`: Facilita la interaccion con la base de datos, mediante la implementacion de `JpaRepository` y las `Query Methods`. Tambien facilita las operaciones de Pagination y Sorting sin escribir sql. Todo mediante `Hibernate` que es quien mueve los hilos detras de `JPA`.
 
-  * `Spring Web`: Escencial para crear aplicacioes web, APIRest o MVC tradicionales. Provee anotaciones esenciales como `@RestController`, `@RequestMapping`, `@GetMapping`, `@PostMapping`, etc.
+  * `Spring Web`: Esencial para crear aplicacioes web, APIRest o MVC tradicionales. Provee anotaciones esenciales como `@RestController`, `@RequestMapping`, `@GetMapping`, `@PostMapping`, etc.
 
   * `Spring Boot DevTools`: Herramienta esencial para desarrollar. Tiene Automatic Restart cuando detecta cambios en el `classpath`, refresca automaticamente la página cuando detecta cambios `HTML` o `CSS`.
 
@@ -112,9 +123,9 @@ public class Emp {
     * `indexes`: Permite definir indices secundarios (`@Index`) para optimizacion de consultas.
 
 * `@Id`: Marca el campo como la clave primaria de la entidad. Normalmente se combina con:
-  * `@GeneratedValue` para autoquenerar valores, pero como esta tabla no usa autoincrement, el `empno` se ingresa manual o alternativas.
+  * `@GeneratedValue` para autogenerar valores, pero como esta tabla no usa autoincrement, el `empno` se ingresa manual o alternativas.
     * Parametros:
-      * `strategy = GenerationType.IDENTITY`: Autoinclemento de MySQL.
+      * `strategy = GenerationType.IDENTITY`: Autoincremento de MySQL.
       * `strategy = GenerationType.SEQUENCE`: Para Oracle/PostgreSQL.
       * `strategy = GenerationType.UUID`: Estándar desde JPA 3.1.
 
@@ -124,9 +135,9 @@ public class Emp {
     * `nullable = false`: Añade una restricción `NOT NULL` a nivel de DDL y validación en runtime. Si no se agrega el default es `true`.
     * `length`: Define la longitud para tipo `VARCHAR` o `CHAR`.
     * `unique`: `true/false`. Crea una restricción `UNIQUE` en la columna.
-    * `updatable` / `insertable`: Si es `false, la columna se ignora en sentencias `UPDATE` o `INSERT`.
-    * `precision` / `scale`: Para números decimales (ej: `BIGDECIAML`).
-    * `commnet`: Añade un comentario al DLL de la columna.
+    * `updatable` / `insertable`: Si es `false`, la columna se ignora en sentencias `UPDATE` o `INSERT`.
+    * `precision` / `scale`: Para números decimales (ej: `BigDecimal`).
+    * `commet`: Añade un comentario al DLL de la columna.
     * `check`: Permite definir una restricción `CHECK` en la columna.
 
 * `@ManyToOne`: Define una relación de cardinalidad "Muchos a Uno"
@@ -135,7 +146,7 @@ public class Emp {
   * Parametros:
     * `fetch`: controla la estrategia de carga.
       * `FetchType.LAZY`: Carga diferiad (Recomendado para performance).
-      * `FetchType.EAGER`: Carga inmediata (Perfecto para `@ManyToOne`).
+      * `FetchType.EAGER`: Carga inmediata (comportamiento por defecto para `@ManyToOne`).
     * `cascade`: Propagar operaciones.
       * `CascadeType.PERSIST`: Si persisto una entidad padre, sus hijos tambien se persisten.
       * `CascadeType.MERGE`: Si actualizo una entidad padre, sus hijos tambien se actualizan.
@@ -302,7 +313,6 @@ Esto hace el `SQL SELECT ename, sal FROM...` en lugar de `SELECT *`, optimizando
 
 Si necesitas filtros dinámicos (ej. un usuario filtra por nombre, otro por fecha, otro por ambos), crear métodos `findBy` para cada combinación es imposible. Para eso, tu repositorio extiende `JpaSpecificationExecutor<Emp>`. Esto te permite construir queries programáticamente (tipo "LEGO") usando la Criteria API.
 
-
 #### `@QueryHints`
 
 Los `@QueryHints` son, metafóricamente, "susurros al oído" que le das a Hibernate para decirle cómo ejecutar una consulta de manera más eficiente.
@@ -323,7 +333,7 @@ Son instrucciones específicas para el proveedor de persistencia. se usan para:
 | `HINT_FETCH_SIZE` | "Trae los datos por paquetes, no todos juntos" | Cuando esperas listas muy grandes (> 1000 registros) pero necesitas procesarlos todos |
 | `HINT_CACHEABLE` | "Guarda este resultado en caché (L2 Cache)" | Para datos que casi nunca cambian (ej. lista de países, categorías) |
 | `jakarta.persistence.query.timeout` | "Si tardas mucho, cancélalo" | Consultas pesadas que podrían bloquear la base de datos |
-| `HINT_COMMENT` | "Ponle una etiqueta a esta query en los logs de la BD" | "Ponle una etiqueta a esta query en los logs de la BD" |
+| `HINT_COMMENT` | "Ponle una etiqueta a esta query en los logs de la BD" | Para debugging. Permite a los DBAs ver qué método Java causó esa query lenta. |
 
 ##### Ejemplo en `Emp`
 
@@ -503,6 +513,8 @@ public class EmpServiceImpl implements EmpService{
 * Constructor `public EmpServiceImpl(EmpRepository empRepository){ ... }`
 
     Estamos usando la `Constructor-based Dependency Injection`, que es la Best Practice actual (superior a usar `@Autowired` en el campo). Hace que la dependencia sea obligatoria e inmutable, y facilita los tests sin necesidad de levantar todo el contexto de `Spring`.
+
+  * Facilita el testing unitario (no necesitas levantar Spring Context) y asegura que el Bean no se instancie en un estado inválido (incompleto).
 
 * Validación de Negocio (`saveNewEmp`): Aquí es donde resalta el servicio. No solo guardas el dato, sino que validas reglas de negocio (ej. "El ID no puede ser nulo", "El empleado no debe existir"). Esto protege la integridad de tu base de datos antes de siquiera intentar insertar.
 
@@ -830,7 +842,7 @@ public class GlobalExceptionHandler {
 }
 ```
 
-Con esto `EmpController` quedaria limpio. Ya no necesitia `try-catch` en `saveEmployee`. Si el servicio lanza `IllegalArgumentException`, esta clase la atrapa y actua en consecuencia.
+Con esto `EmpController` quedaria limpio. Ya no necesita `try-catch` en `saveEmployee`. Si el servicio lanza `IllegalArgumentException`, esta clase la atrapa y actua en consecuencia.
 
 #### `@InitBinder`
 
