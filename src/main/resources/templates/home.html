@@ -34,62 +34,38 @@
       </div>
 
       <div class="container m-2">
-        <h1>Hola Spring Boot!</h1>
+        <h1>Proyecto Spring Boot con Base de Datos Scott</h1>
         <p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatem
-          laboriosam iure fugiat veniam nisi et amet velit voluptatum quod eius.
-          Odio non mollitia itaque impedit facilis harum cum, expedita commodi.
+          Esta aplicación es un ejemplo de un CRUD (Crear, Leer, Actualizar,
+          Borrar) desarrollado con <strong>Spring Boot</strong>.
         </p>
-        <br />
         <p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatem
-          laboriosam iure fugiat veniam nisi et amet velit voluptatum quod eius.
-          Odio non mollitia itaque impedit facilis harum cum, expedita commodi.
+          La aplicación gestiona la base de datos clásica de
+          <strong>Scott</strong>, permitiendo realizar operaciones sobre las
+          tablas de empleados (<code>emp</code>) y departamentos
+          (<code>dept</code>).
         </p>
+        <p>Utiliza las siguientes tecnologías principales:</p>
+        <ul>
+          <li>
+            <strong>Spring Web</strong>: Para la creación de la aplicación web y
+            los controladores REST.
+          </li>
+          <li>
+            <strong>Spring Data JPA</strong>: Para la persistencia y el acceso a
+            los datos de forma sencilla.
+          </li>
+          <li>
+            <strong>Thymeleaf</strong>: Como motor de plantillas para generar
+            las vistas HTML.
+          </li>
+          <li>
+            <strong>MySQL Connector/J</strong>: Para la conexión con la base de
+            datos MySQL.
+          </li>
+        </ul>
       </div>
-
-      <button
-        type="button"
-        class="btn btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#exampleModal"
-      >
-        Launch demo modal
-      </button>
-
-      <div class="modal" tabindex="-1" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Modal title</h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <p>Modal body text goes here.</p>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" class="btn btn-primary">
-                Save changes
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </main>
-
     <div th:replace="~{fragments/footer :: footer}"></div>
     <!-- BootStrap -->
     <script
@@ -100,6 +76,5 @@
 
     <!-- Script modal -->
     <script th:src="@{/assets/script/modal.js}"></script>
-
   </body>
 </html>

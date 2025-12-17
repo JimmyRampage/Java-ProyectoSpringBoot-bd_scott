@@ -15,13 +15,13 @@
                   class="page-link"
                   th:href="@{${url}(page=${object.number - 1}, size=${object.size})}"
                 >
-                  Anterior
+                  Previous
                 </a>
               </li>
 
               <li class="page-item disabled">
                 <a class="page-link" href="#">
-                  Página <span th:text="${object.number + 1}"></span> de
+                  Page <span th:text="${object.number + 1}"></span> of
                   <span th:text="${object.totalPages}"></span>
                 </a>
               </li>
@@ -34,7 +34,7 @@
                   class="page-link"
                   th:href="@{${url}(page=${object.number + 1}, size=${object.size})}"
                 >
-                  Siguiente
+                  Next
                 </a>
               </li>
             </ul>

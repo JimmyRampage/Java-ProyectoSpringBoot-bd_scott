@@ -76,7 +76,7 @@ public class EmpController {
             empService.saveNewEmp(emp);
             return "redirect:/emp/list";
         } catch (IllegalArgumentException e) {
-            result.rejectValue("empno", "error.emp", e.getMessage());
+            result.rejectValue("empno", "error.emp");
             model.addAttribute("error", e.getMessage());
             return "emp/form-emp";
         }

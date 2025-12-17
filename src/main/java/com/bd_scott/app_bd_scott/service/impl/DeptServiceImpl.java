@@ -9,19 +9,16 @@ import org.springframework.stereotype.Service;
 
 import com.bd_scott.app_bd_scott.model.Dept;
 import com.bd_scott.app_bd_scott.repository.DeptRepository;
-import com.bd_scott.app_bd_scott.repository.EmpRepository;
+
 import com.bd_scott.app_bd_scott.service.DeptService;
 
 @Service
 public class DeptServiceImpl implements DeptService{
 
-    private final EmpRepository empRepository;
-
     private final DeptRepository deptRepository;
 
-    public DeptServiceImpl(DeptRepository deptRepository, EmpRepository empRepository) {
+    public DeptServiceImpl(DeptRepository deptRepository) {
         this.deptRepository = deptRepository;
-        this.empRepository = empRepository;
     }
 
     @Override
@@ -31,21 +28,25 @@ public class DeptServiceImpl implements DeptService{
 
     @Override
     public Page<Dept> findAllPage(Pageable pageable) {
+        if (pageable == null) return Page.empty();
         return deptRepository.findAll(pageable);
     }
 
     @Override
     public void saveDept(Dept dept) {
+        if (dept == null) throw new IllegalArgumentException("Departamento no puede ser null");
         deptRepository.save(dept);
     }
 
     @Override
     public Optional<Dept> findById(Integer id) {
+        if (id == null) return Optional.empty();
         return deptRepository.findById(id);
     }
 
     @Override
     public void deleteById(Integer id) {
+        if (id == null) throw new IllegalArgumentException("Id no puede ser null");
         deptRepository.deleteById(id);
     }
 
@@ -65,6 +66,7 @@ public class DeptServiceImpl implements DeptService{
 
     @Override
     public Page<Dept> findByCriteria(String type, String value, Pageable pageable) {
+        if (pageable == null) pageable = Pageable.unpaged();
         if (value == null || type == null) return Page.empty();
         try {
             return switch (type.toLowerCase()) {

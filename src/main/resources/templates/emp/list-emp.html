@@ -22,7 +22,7 @@
 
     <!-- HEADER -->
     <div
-      th:replace="~{fragments/header :: header(title = 'Listado Empleados')}"
+      th:replace="~{fragments/header :: header(title = 'Employee List & Search')}"
     ></div>
 
     <!-- Boton -->
@@ -62,28 +62,19 @@
               >
                 Ename
               </option>
-              <option
-                value="job"
-                th:selected="${tipoSeleccionado == 'job'}"
-                >
+              <option value="job" th:selected="${tipoSeleccionado == 'job'}">
                 Job
               </option>
-              <option
-                value="sal"
-                th:selected="${tipoSeleccionado == 'sal'}"
-                >
+              <option value="sal" th:selected="${tipoSeleccionado == 'sal'}">
                 Salary Min
               </option>
-              <option
-                value="comm"
-                th:selected="${tipoSeleccionado == 'comm'}"
-                >
+              <option value="comm" th:selected="${tipoSeleccionado == 'comm'}">
                 Commission Min
               </option>
               <option
                 value="deptno"
                 th:selected="${tipoSeleccionado == 'deptno'}"
-                >
+              >
                 Department No.
               </option>
             </select>
@@ -148,8 +139,10 @@
                 ></a>
                 <!-- Delete -->
                 <a
-                  th:href="@{/emp/delete/{id} (id=${emp.empno})}"
-                  onclick="return confirm('¿Estas seguro?')"
+                  href="#"
+                  th:data-url="@{/emp/delete/{id} (id=${emp.empno})}"
+                  th:data-id-modal="'modalBorrarEmp'"
+                  onclick="event.preventDefault(); openModalGeneric(this, this.getAttribute('data-id-modal'))"
                   class="text-danger"
                   ><i class="fa-solid fa-ban"></i
                 ></a>
@@ -160,11 +153,19 @@
       </div>
     </div>
 
+    <!-- Modal -->
+    <div
+      th:replace="~{fragments/modalDelete :: modal-confirmacion('modalBorrarEmp', 'Delete?', '¿Are you sure you want to delete this employee?') }"
+    ></div>
+
     <!-- Pageable -->
-    <div th:replace="~{fragments/pageable :: pageable(${empPage}, '/emp/list')}"></div>
+    <div
+      th:replace="~{fragments/pageable :: pageable(${empPage}, '/emp/list')}"
+    ></div>
 
     <!-- Footer -->
     <div th:replace="~{fragments/footer :: footer}"></div>
+
     <!-- BootStrap -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

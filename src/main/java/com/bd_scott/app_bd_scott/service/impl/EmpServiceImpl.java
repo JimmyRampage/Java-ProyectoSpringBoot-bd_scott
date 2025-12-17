@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
 import com.bd_scott.app_bd_scott.model.Dept;
 import com.bd_scott.app_bd_scott.model.Emp;
 import com.bd_scott.app_bd_scott.repository.EmpRepository;
@@ -39,16 +38,19 @@ public class EmpServiceImpl implements EmpService{
 
     @Override
     public Page<Emp> findAllPage(Pageable pageable) {
+        if (pageable == null) return Page.empty();
         return empRepository.findAll(pageable);
     }
 
     @Override
     public Optional<Emp> findById(Integer id) {
+        if (id == null) return Optional.empty();
         return empRepository.findById(id);
     }
 
     @Override
     public void saveEmp(Emp emp) {
+        if (emp == null) throw new IllegalArgumentException("Empleado no puede ser null");
         empRepository.save(emp);
     }
 
@@ -71,6 +73,7 @@ public class EmpServiceImpl implements EmpService{
 
     @Override
     public Page<Emp> findByCriteria(String type, String value, Pageable pageable) {
+        if (pageable == null) pageable = Pageable.unpaged();
         if (value == null || type == null) return Page.empty();
         try {
             return switch (type.toLowerCase()) {

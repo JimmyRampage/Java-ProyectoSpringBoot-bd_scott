@@ -68,7 +68,7 @@ public class DeptController {
             deptService.saveNewDept(dept);
             return "redirect:/dept/list";
         } catch (IllegalArgumentException e) {
-            result.rejectValue("deptno", "error.dept", e.getMessage());
+            result.rejectValue("deptno", "error.dept");
             model.addAttribute("error", e.getMessage());
             return "dept/form-dept";
         }
