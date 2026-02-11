@@ -6,17 +6,17 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.bd_scott.app_bd_scott.model.User;
 import com.bd_scott.app_bd_scott.repository.UserRepository;
-import com.bd_scott.app_bd_scott.service.UserService;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {

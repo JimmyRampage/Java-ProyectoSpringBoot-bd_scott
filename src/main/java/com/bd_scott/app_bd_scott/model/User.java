@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
@@ -31,18 +32,23 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Setter
     @Column(nullable = false, length = 45)
     private String name;
 
+    @Setter
     @Column(unique = true, nullable = false, length = 45)
     private String username;
 
+    @Setter
     @Column(unique = true, nullable = false, length = 100)
     private String email;
 
+    @Setter
     @Column(nullable = false, length = 100)
     private String password;
 
+    @Setter
     @Column(nullable = false)
     private boolean enabled = true;
 
