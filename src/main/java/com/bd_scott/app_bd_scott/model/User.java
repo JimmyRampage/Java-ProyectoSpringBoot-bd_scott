@@ -16,7 +16,10 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -25,25 +28,31 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 @ToString(exclude = "roles")
+@EqualsAndHashCode(of = "id")
 public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NonNull
     @Setter
     @Column(nullable = false, length = 45)
     private String name;
 
+    @NonNull
     @Setter
     @Column(unique = true, nullable = false, length = 45)
     private String username;
 
+    @NonNull
     @Setter
     @Column(unique = true, nullable = false, length = 100)
     private String email;
 
+    @NonNull
     @Setter
     @Column(nullable = false, length = 100)
     private String password;
@@ -52,11 +61,10 @@ public class User implements Serializable {
     @Column(nullable = false)
     private boolean enabled = true;
 
-    // Relación Muchos a Muchos: Un usuario tiene muchos roles, un rol lo tienen muchos usuarios
     // EAGER: Cuando cargo el usuario, quiero sus roles INMEDIATAMENTE para seguridad
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "users_roles", // Nombre de la tabla intermedia automática
+        name = "users_roles",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
