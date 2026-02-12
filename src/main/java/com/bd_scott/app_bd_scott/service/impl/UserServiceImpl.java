@@ -9,9 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bd_scott.app_bd_scott.dto.UserRegistrationDto;
-import com.bd_scott.app_bd_scott.model.Role;
 import com.bd_scott.app_bd_scott.model.User;
-import com.bd_scott.app_bd_scott.repository.EmpRepository;
 import com.bd_scott.app_bd_scott.repository.RoleRepository;
 import com.bd_scott.app_bd_scott.repository.UserRepository;
 import com.bd_scott.app_bd_scott.service.UserService;
@@ -81,5 +79,11 @@ public class UserServiceImpl implements UserService {
             case "role" -> userRepository.findByRoles(value, pageable);
             default -> userRepository.findAll(pageable);
         };
+    }
+
+    @Override
+    public User saveUser(User user) {
+        if (user == null) throw new IllegalArgumentException("Usuario no puede ser null");
+        return userRepository.save(user);
     }
 }

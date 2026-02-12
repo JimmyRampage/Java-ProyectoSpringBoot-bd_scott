@@ -23,7 +23,7 @@ public class SecurityConfig {
             authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**", "/js/**", "/assets/**")
                     .permitAll()
-                .requestMatchers("/", "/login", "/register")
+                .requestMatchers("/", "/login", "/register", "/logout")
                     .permitAll()
                 // USER
                 .requestMatchers( "/emp/list", "/dept/list")
