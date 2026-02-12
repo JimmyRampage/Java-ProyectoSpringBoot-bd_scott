@@ -12,4 +12,9 @@ public class HomeController {
     public String showHome() {
         return "home";
     }
+
+    @GetMapping("/accessDenied")
+    public String showAccessDenied() {
+        return "error/accessDenied"; // Retorna la vista accessDenied.html
+    }
 }
