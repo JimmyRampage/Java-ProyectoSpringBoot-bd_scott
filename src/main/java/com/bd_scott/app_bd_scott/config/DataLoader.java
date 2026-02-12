@@ -18,19 +18,19 @@ public class DataLoader {
         RoleRepository roleRepository,
         PasswordEncoder passwordEncoder) {
         return args -> {
-            // 1. Crear Roles si no existen
+            // Crear Roles si no existen
             if (roleRepository.count() == 0) {
                 roleRepository.save(new Role("ROLE_ADMIN"));
+                roleRepository.save(new Role("ROLE_MODERATOR"));
                 roleRepository.save(new Role("ROLE_USER"));
             }
 
-            // 2. Crear Usuario Admin si no existe
+            // Crear Usuario Admin si no existe
             if (userRepository.findByUsername("admin").isEmpty()) {
                 User admin = new User();
                 admin.setName("admin");
                 admin.setUsername("admin");
                 admin.setEmail("admin@admin.com");
-                // ¡AQUÍ ESTÁ LA CLAVE! Encriptamos la contraseña antes de guardar
                 admin.setPassword(passwordEncoder.encode("admin1234"));
                 admin.setEnabled(true);
 

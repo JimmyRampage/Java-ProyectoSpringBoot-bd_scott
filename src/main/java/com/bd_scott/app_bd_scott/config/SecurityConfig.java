@@ -23,14 +23,20 @@ public class SecurityConfig {
             authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**", "/js/**", "/assets/**")
                     .permitAll()
-                .requestMatchers("/")
+                .requestMatchers("/", "/login", "/register")
                     .permitAll()
+                // USER
+                .requestMatchers( "/emp/list", "/dept/list")
+                    .hasAnyRole("USER", "ADMIN")
+                // MODERATOR
+                // ADMIN
                 .requestMatchers("/emp/**", "/dept/**")
                     .hasRole("ADMIN")
                 .anyRequest()
                     .authenticated()
             )
             .formLogin(login -> login
+                .loginPage("/login")
                 .defaultSuccessUrl("/", true)
                     .permitAll()
             )
