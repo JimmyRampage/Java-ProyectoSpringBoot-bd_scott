@@ -33,6 +33,10 @@ Proyecto de practica para aprender y consolidar los conocimientos con SpringBoot
 
   * `Validation`: Provee un mecanismo declarativo para asegurar la Integridad de los Datos que entran a la aplicación. Permite usar anotaciones en las clases `model` como `@NotNull`, `@Size`, `@Min`, `@Max`, etc. Su integracion a los `Controllers` es mediante el uso de la anotación `@Valid`. Esta dependencia evitar llenar la lógica con bloques `if-else`.
 
+  * `spring-boot-starter-security`: Agrega los filtros de seguridad y la configuración base.
+
+  * `thymeleaf-extras-springsecurity6`: Permite usar etiquetas como `sec:authorize` en el HTML para mostrar/ocultar botones según el rol.
+
 ---
 
 ## Parte 2: Creando el Modelo
@@ -1189,3 +1193,225 @@ A veces necesitas tocar atributos HTML que no son estándares o que Thymeleaf no
          th:classappend="${porcentajeAvance > 90} ? 'bg-success' : 'bg-primary'">
     </div>
     ```
+
+---
+
+## Parte 7: Seguridad con Spring Security
+
+En esta fase hemos integrado **Spring Security 6**, el estándar de facto para asegurar aplicaciones en el ecosistema Spring. Hemos pasado de una aplicación abierta a una protegida con autenticación (¿quién eres?) y autorización (¿qué puedes hacer?).
+
+### Conceptos Clave Implementados
+
+1. **Authentication (Autenticación):** Validación de credenciales (Usuario y Contraseña).
+2. **Authorization (Autorización):** Control de acceso basado en Roles.
+
+* `ROLE_ADMIN`: Acceso total (Crear, Editar, Borrar, Ver Usuarios).
+* `ROLE_MODERATOR`: Acceso limitado (Solo lectura y actualizaciones).
+* `ROLE_USER`: Acceso limitado (Solo lectura).
+
+1. **Password Encoding:** Las contraseñas nunca se guardan en texto plano. Usamos **BCrypt**.
+
+### Dependencias Necesarias
+
+En el `pom.xml` se agregaron:
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.thymeleaf.extras</groupId>
+    <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+</dependency>
+
+```
+
+* `spring-boot-starter-security`: Agrega los filtros de seguridad y la configuración base.
+* `thymeleaf-extras-springsecurity6`: Permite usar etiquetas como `sec:authorize` en el HTML para mostrar/ocultar botones según el rol.
+
+---
+
+### Modelos `User` y `Role`
+
+Para poder tener tablas con campos personanilazos tenenos que crear los modelos JPA `User` y `Role`.
+
+Estos modelos nos van a permitir guardar y manipular la informacion que necesitemos.
+
+Tambien generamos una relacion many to many
+
+---
+
+### La Configuración (`SecurityConfig`)
+
+En Spring Boot 3, ya no se hereda de clases base. Ahora se define un `@Bean` que retorna un `SecurityFilterChain`. Esto hace la configuración más modular y fácil de leer.
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authorize -> authorize
+                // Recursos estáticos públicos (CSS, JS, Imágenes)
+                .requestMatchers("/assets/**", "/css/**", "/js/**").permitAll()
+                // Páginas públicas (Login, Registro)
+                .requestMatchers("/login", "/register", "/saveUser").permitAll()
+                // Rutas restringidas solo a ADMIN
+                .requestMatchers("/users/**", "/emp/create**", "/emp/delete/**", "/emp/update/**").hasRole("ADMIN")
+                // El resto requiere autenticación (mínimo ROLE_USER)
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login") // Nuestra vista personalizada
+                .defaultSuccessUrl("/", true) // A dónde ir tras loguearse
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+            );
+        
+        return http.build();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+
+```
+
+#### Detalle de la Configuración
+
+* `@EnableWebSecurity`: Habilita el soporte de seguridad web y la integración con Spring MVC.
+* `authorizeHttpRequests`: Es el gestor de reglas de URL. El orden importa: **de lo más específico a lo más general**.
+* `formLogin`: Configura la autenticación basada en formularios HTML. Si no se define `.loginPage()`, Spring genera una por defecto fea.
+* `passwordEncoder`: Define el algoritmo de hash. **Crucial**: Spring Security espera que las contraseñas en la BBDD estén hasheadas con este mismo algoritmo.
+
+---
+
+### El Puente: `UserDetailsService`
+
+Spring Security no sabe nada sobre nuestra tabla `User` o `Role`. Necesita un intermediario que traduzca nuestras entidades a algo que él entienda (`UserDetails`).
+
+Para esto implementamos la interfaz `UserDetailsService`:
+
+```java
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+    // Constructor Injection...
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // 1. Buscamos nuestro usuario en la BBDD
+        User user = userRepository.findByEmail(email);
+        
+        if (user == null) {
+            throw new UsernameNotFoundException("Usuario o password inválidos");
+        }
+
+        // 2. Mapeamos nuestros Roles a GrantedAuthority de Spring
+        // Spring Security espera que los roles empiecen por "ROLE_" (ej: ROLE_ADMIN)
+        Collection<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+
+        // 3. Retornamos el objeto User propio de Spring Security
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                authorities);
+    }
+}
+
+```
+
+---
+
+### Patrón DTO en el Registro
+
+Para el registro de usuarios, no usamos la entidad `User` directamente en el controlador. Usamos un **DTO (Data Transfer Object)**.
+
+**¿Por qué?**
+
+1. **Seguridad:** Evita que un usuario malintencionado envíe campos extra (ej. inyectar un rol `ADMIN` en el formulario de registro).
+2. **Validación:** Podemos validar cosas que no están en la BBDD, como que el campo "Confirmar Contraseña" coincida con "Contraseña".
+
+```java
+@Getter
+@Setter
+public class UserRegistrationDto {
+    @NotEmpty(message = "Nombre obligatorio")
+    @Size(max = 45, min = 3, message = "Mínimo 3 y máximo 45 caracteres")
+    private String name;
+
+    @NotEmpty(message = "Username obligatorio")
+    @Size(max = 45, min = 3, message = "Mínimo 3 y máximo 45 caracteres")
+    private String username;
+
+    @Email(message = "Email inválido")
+    @NotEmpty(message = "Email obligatorio")
+    @Size(max = 100, min = 5, message = "Mínimo 5 y máximo 100 caracteres")
+    private String email;
+
+    @NotEmpty(message = "Password obligatorio")
+    @Size(max = 100, min = 5, message = "Mínimo 5 y máximo 100 caracteres")
+    private String password;
+
+    @NotEmpty(message = "Confirmar el password es obligatorio")
+    @Size(max = 100, min = 5, message = "Mínimo 5 y máximo 100 caracteres")
+    private String confirmPassword;
+}
+```
+
+---
+
+### Integración en Frontend (Thymeleaf)
+
+Gracias a `thymeleaf-extras-springsecurity6`, podemos controlar qué ve el usuario.
+
+#### Mostrar contenido solo si está autenticado
+
+```html
+<div sec:authorize="isAuthenticated()">
+    Bienvenido, <span sec:authentication="name">Usuario</span>
+</div>
+
+```
+
+#### Mostrar botones según el Rol
+
+En el Navbar o en las tablas, ocultamos los botones de borrar/editar para usuarios normales.
+
+```html
+<li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+    <a class="nav-link" th:href="@{/users/list}">Gestión de Usuarios</a>
+</li>
+
+<li sec:authorize="isAuthenticated()">
+    <a th:href="@{/logout}">Salir</a>
+</li>
+
+```
+
+---
+
+### Flujo de Datos (Data Flow) de Login
+
+1. Usuario envía formulario POST a `/login`.
+2. `AuthenticationFilter` intercepta la petición.
+3. Llama al `AuthenticationManager`.
+4. Este delega en `UserDetailsServiceImpl.loadUserByUsername()`.
+5. Si el usuario existe, el `DaoAuthenticationProvider` comprueba si la contraseña (hasheada con BCrypt) coincide.
+6. Si es correcto -> Se crea una `Session` HTTP y se guarda el `SecurityContext`.
+7. Si falla -> Redirige a `/login?error`.

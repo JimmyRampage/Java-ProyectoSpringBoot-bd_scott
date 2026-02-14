@@ -42,7 +42,6 @@ public class DataLoader {
                 admin.setPassword(passwordEncoder.encode("admin1234"));
                 admin.setEnabled(true);
 
-                // Asignar rol
                 Role rolAdmin = roleRepository.findByNombre("ROLE_ADMIN").get();
                 admin.addRole(rolAdmin);
 
@@ -57,7 +56,6 @@ public class DataLoader {
                 moderator.setPassword(passwordEncoder.encode("moderator1234"));
                 moderator.setEnabled(true);
 
-                // Asignar rol
                 Role rolModerator = roleRepository.findByNombre("ROLE_MODERATOR").get();
                 moderator.addRole(rolModerator);
 
@@ -72,7 +70,6 @@ public class DataLoader {
                 user.setPassword(passwordEncoder.encode("user1234"));
                 user.setEnabled(true);
 
-                // Asignar rol
                 Role rolUser = roleRepository.findByNombre("ROLE_USER").get();
                 user.addRole(rolUser);
 
