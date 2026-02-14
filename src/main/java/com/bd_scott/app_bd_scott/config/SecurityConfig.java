@@ -26,11 +26,11 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/register", "/logout")
                     .permitAll()
                 // USER
-                .requestMatchers( "/emp/list", "/dept/list")
+                .requestMatchers( "/emp/list", "/dept/list", "/users/list")
                     .hasAnyRole("USER", "ADMIN")
                 // MODERATOR
                 // ADMIN
-                .requestMatchers("/emp/**", "/dept/**")
+                .requestMatchers("/emp/**", "/dept/**", "/users/**")
                     .hasRole("ADMIN")
                 .anyRequest()
                     .authenticated()

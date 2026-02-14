@@ -26,6 +26,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "users")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -38,26 +39,21 @@ public class User implements Serializable {
     private Integer id;
 
     @NonNull
-    @Setter
     @Column(nullable = false, length = 45)
     private String name;
 
     @NonNull
-    @Setter
     @Column(unique = true, nullable = false, length = 45)
     private String username;
 
     @NonNull
-    @Setter
     @Column(unique = true, nullable = false, length = 100)
     private String email;
 
     @NonNull
-    @Setter
     @Column(nullable = false, length = 100)
     private String password;
 
-    @Setter
     @Column(nullable = false)
     private boolean enabled = true;
 
