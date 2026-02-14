@@ -11,14 +11,13 @@ import com.bd_scott.app_bd_scott.model.Emp;
 import com.bd_scott.app_bd_scott.repository.EmpRepository;
 import com.bd_scott.app_bd_scott.service.EmpService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class EmpServiceImpl implements EmpService{
 
     private final EmpRepository empRepository;
-
-    public EmpServiceImpl(EmpRepository empRepository){
-        this.empRepository = empRepository;
-    }
 
     @Override
     public void deleteById(Integer id) {

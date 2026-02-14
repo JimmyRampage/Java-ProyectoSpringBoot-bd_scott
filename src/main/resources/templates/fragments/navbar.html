@@ -1,77 +1,137 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
+<!-- NAVBAR START -->
+<nav
+  th:fragment="navbar"
+  class="navbar navbar-expand-lg bg-body-tertiary sticky-top"
+>
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/}">BD_SCOTT</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div
+      class="collapse navbar-collapse justify-content-between"
+      id="navbarSupportedContent"
+    >
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- HOME -->
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" th:href="@{/}">Home</a>
+        </li>
 
-  <!-- NAVBAR START -->
-  <nav th:fragment="navbar" class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
-    <div class="container-fluid">
-      <a class="navbar-brand" th:href="@{/}">BD_SCOTT</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- DROPDOWN EMP -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Employees
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" th:href="@{/emp/list}">List Employees</a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li sec:authorize="hasAnyRole('ADMIN')">
+              <a class="dropdown-item" th:href="@{/emp/createEmp}"
+                >Create Employee</a
+              >
+            </li>
+          </ul>
+        </li>
 
-          <!-- HOME -->
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
-          </li>
+        <!-- DROPDOWN DEPT -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Departments
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" th:href="@{/dept/list}"
+                >List Departments</a
+              >
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li sec:authorize="hasAnyRole('ADMIN')">
+              <a class="dropdown-item" th:href="@{/dept/createDept}"
+                >Create Department</a
+              >
+            </li>
+          </ul>
+        </li>
 
-          <!-- DROPDOWN EMP -->
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Employees
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" th:href="@{/emp/list}">List Employees</a></li>
-              <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" th:href="@{/emp/createEmp}">Create Employee</a></li>
-            </ul>
-          </li>
+        <!-- DROPDOWN USERS -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Users
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" th:href="@{/users/list}"
+                >List Users</a
+              >
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li sec:authorize="hasAnyRole('ADMIN')">
+              <a class="dropdown-item" th:href="@{/users/createUsers}"
+                >Create Users</a
+              >
+            </li>
+          </ul>
+        </li>
 
-          <!-- DROPDOWN DEPT -->
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Departments
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" th:href="@{/dept/list}">List Departments</a></li>
-              <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" th:href="@{/dept/createDept}">Create Department</a></li>
-            </ul>
-          </li>
+        <!-- ABOUT US -->
+        <li class="nav-item">
+          <a class="nav-link disabled" th:href="@{/about}" aria-disabled="true"
+            >About Us</a
+          >
+        </li>
+      </ul>
 
-          <!-- ABOUT US -->
-          <li class="nav-item">
-            <a class="nav-link disabled" th:href="@{/about}" aria-disabled="true">About Us</a>
-          </li>
+      <!-- SECURITY -->
+      <span class="text-dark">Welcome</span>&nbsp;
+      <span class="text-dark" sec:authorize="isAnonymous()">Anonymous</span>
+      <span
+        class="text-dark"
+        sec:authorize="isAuthenticated()"
+        sec:authentication="name"
+      ></span>
 
-        </ul>
-
-      </div>
+      <ul class="navbar-nav">
+        <li sec:authorize="isAnonymous()" class="nav-item">
+          <a class="nav-link" th:href="@{/index}">Login</a>
+        </li>
+        <li sec:authorize="isAnonymous()" class="nav-item">
+          <a class="nav-link" th:href="@{/register}">Register</a>
+        </li>
+        <li sec:authorize="isAuthenticated()" class="nav-item">
+          <a class="nav-link" th:href="@{/logout}">Logout</a>
+        </li>
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <!-- NAVBAR END -->
-</body>
-</html>
+<!-- NAVBAR END -->

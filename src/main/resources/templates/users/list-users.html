@@ -27,12 +27,12 @@
       th:replace="~{fragments/header :: header(title = 'Department List & Search')}"
     ></div>
 
-    <!-- Button Create Dept -->
+    <!-- Button Create User -->
     <div class="container my-2" sec:authorize="hasAnyRole('ADMIN')">
       <div class="row">
         <div class="col text-center">
-          <a th:href="@{/dept/createDept}" class="btn btn-primary"
-            >Create New Dept</a
+          <a th:href="@{/users/createUsers}" class="btn btn-primary"
+            >Create New User</a
           >
         </div>
       </div>
@@ -53,26 +53,24 @@
     <div class="container">
       <div class="row my-2">
         <form
-          th:action="@{/dept/list}"
+          th:action="@{/users/list}"
           method="GET"
           class="row g-3 align-items-center justify-content-center"
         >
           <div class="col-auto">
             <select name="type" class="form-select">
               <option
-                value="deptno"
-                th:selected="${tipoSeleccionado == 'deptno'}"
+                value="name"
+                th:selected="${tipoSeleccionado == 'name'}"
               >
-                Deptno
+                Name
               </option>
+              <!-- A ver si Role funciona -->
               <option
-                value="dname"
-                th:selected="${tipoSeleccionado == 'dname'}"
+                value="role"
+                th:selected="${tipoSeleccionado == 'role'}"
               >
-                Dname
-              </option>
-              <option value="loc" th:selected="${tipoSeleccionado == 'loc'}">
-                Loc
+                Role
               </option>
             </select>
           </div>
@@ -87,7 +85,7 @@
           </div>
           <div class="col-auto">
             <button type="submit" class="btn btn-primary">Search</button>
-            <a th:href="@{/dept/list}" class="btn btn-secondary">Clean</a>
+            <a th:href="@{/users/list}" class="btn btn-secondary">Clean</a>
           </div>
         </form>
       </div>
@@ -99,31 +97,33 @@
         <table class="table table-striped">
           <thead>
             <tr class="table-primary">
-              <th class="text-center">DPTNO</th>
-              <th class="text-center">DNAME</th>
-              <th class="text-center">LOC</th>
+              <th class="text-center">NAME</th>
+              <th class="text-center">USERNAME</th>
+              <th class="text-center">EMAIL</th>
+              <th class="text-center">ENABLE</th>
               <th class="text-center" sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
-            <tr th:each="dept : ${deptPage.content}">
-              <td th:text="${dept.deptno}"></td>
-              <td th:text="${dept.dname}"></td>
-              <td th:text="${dept.loc != null ? dept.loc : 'N/A'}"></td>
+            <tr th:each="user : ${usersPage.content}">
+              <td th:text="${user.name}"></td>
+              <td th:text="${user.username}"></td>
+              <td th:text="${user.email}"></td>
+              <td th:text="${user.enabled ? 'Yes' : 'No'}"></td>
               <!-- ACTIONS -->
               <td sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')" class="d-flex justify-content-center gap-3">
                 <!-- Update -->
                 <a
-                  th:href="@{/dept/edit/{id} (id=${dept.deptno})}"
-                  class="text-warning"
+                  th:href="@{/users/edit/{id} (id=${user.id})}"
+                  class="text-warning mx-auto"
                   ><i class="fa-regular fa-pen-to-square"></i
                 ></a>
                 <!-- Delete -->
                 <a
                   sec:authorize="hasAnyRole('ADMIN')"
                   href="#"
-                  th:data-url="@{/dept/delete/{id} (id=${dept.deptno})}"
-                  th:data-id-modal="'modalBorrarDept'"
+                  th:data-url="@{/users/delete/{id} (id=${user.id})}"
+                  th:data-id-modal="'modalBorrarUser'"
                   onclick="event.preventDefault(); openModalGeneric(this, this.getAttribute('data-id-modal'))"
                   class="text-danger"
                 >
@@ -138,11 +138,11 @@
 
     <!-- Modal -->
     <div
-      th:replace="~{fragments/modalDelete :: modal-confirmacion('modalBorrarDept', 'Delete?', '¿¿Are you sure you want to delete this department?') }"
+      th:replace="~{fragments/modalDelete :: modal-confirmacion('modalBorrarUser', 'Delete?', '¿¿Are you sure you want to delete this user?') }"
     ></div>
     <!-- Pageable -->
     <div
-      th:replace="~{fragments/pageable :: pageable(${deptPage}, '/dept/list')}"
+      th:replace="~{fragments/pageable :: pageable(${usersPage}, '/users/list')}"
     ></div>
 
     <!-- Footer -->

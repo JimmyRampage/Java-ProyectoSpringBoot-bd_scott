@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 @RequestMapping("/dept")
 public class DeptController {
-    // Inyeccion del DeptService
+
     private final DeptService deptService;
 
     public DeptController(DeptService deptService) {
@@ -33,7 +33,7 @@ public class DeptController {
     }
 
     @GetMapping("/list")
-    public String getMethodName(@RequestParam(value = "type", required = false) String type,
+    public String list(@RequestParam(value = "type", required = false) String type,
                                 @RequestParam(value = "value", required = false) String value,
                                 @PageableDefault(page = 0, size = 10) Pageable pageable,
                                 Model model) {
