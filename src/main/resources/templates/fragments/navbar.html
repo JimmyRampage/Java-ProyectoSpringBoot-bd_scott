@@ -42,7 +42,7 @@
               <a class="dropdown-item" th:href="@{/emp/list}">List Employees</a>
             </li>
             <li><hr class="dropdown-divider" /></li>
-            <li>
+            <li sec:authorize="hasAnyRole('ADMIN')">
               <a class="dropdown-item" th:href="@{/emp/createEmp}"
                 >Create Employee</a
               >
@@ -68,7 +68,7 @@
               >
             </li>
             <li><hr class="dropdown-divider" /></li>
-            <li>
+            <li sec:authorize="hasAnyRole('ADMIN')">
               <a class="dropdown-item" th:href="@{/dept/createDept}"
                 >Create Department</a
               >
@@ -94,7 +94,7 @@
               >
             </li>
             <li><hr class="dropdown-divider" /></li>
-            <li>
+            <li sec:authorize="hasAnyRole('ADMIN')">
               <a class="dropdown-item" th:href="@{/users/createUsers}"
                 >Create Users</a
               >

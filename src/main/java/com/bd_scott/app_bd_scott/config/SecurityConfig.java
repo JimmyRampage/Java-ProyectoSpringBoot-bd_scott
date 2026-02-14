@@ -27,9 +27,13 @@ public class SecurityConfig {
                     .permitAll()
                 // USER
                 .requestMatchers( "/emp/list", "/dept/list", "/users/list")
-                    .hasAnyRole("USER", "ADMIN")
-                // MODERATOR
-                // ADMIN
+                    .hasAnyRole("USER", "MODERATOR", "ADMIN")
+                // MODERATOR PUEDE EDITAR
+                .requestMatchers("/emp/edit/**", "/emp/update",
+                                    "/dept/edit/**", "/dept/update",
+                                    "/users/edit/**", "/users/update")
+                    .hasAnyRole("MODERATOR", "ADMIN")
+                // ADMIN PUEDE TODO
                 .requestMatchers("/emp/**", "/dept/**", "/users/**")
                     .hasRole("ADMIN")
                 .anyRequest()

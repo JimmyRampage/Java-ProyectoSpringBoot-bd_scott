@@ -55,7 +55,7 @@ public class User implements Serializable {
     private String password;
 
     @Column(nullable = false)
-    private boolean enabled = true;
+    private boolean enabled = false;
 
     // EAGER: Cuando cargo el usuario, quiero sus roles INMEDIATAMENTE para seguridad
     @ManyToMany(fetch = FetchType.EAGER)

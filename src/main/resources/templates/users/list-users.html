@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,7 +28,7 @@
     ></div>
 
     <!-- Button Create User -->
-    <div class="container my-2">
+    <div class="container my-2" sec:authorize="hasAnyRole('ADMIN')">
       <div class="row">
         <div class="col text-center">
           <a th:href="@{/users/createUsers}" class="btn btn-primary"
@@ -95,11 +97,11 @@
         <table class="table table-striped">
           <thead>
             <tr class="table-primary">
-              <th>NAME</th>
-              <th>USERNAME</th>
-              <th>EMAIL</th>
-              <th>ENABLE</th>
-              <th>ACTIONS</th>
+              <th class="text-center">NAME</th>
+              <th class="text-center">USERNAME</th>
+              <th class="text-center">EMAIL</th>
+              <th class="text-center">ENABLE</th>
+              <th class="text-center" sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
@@ -109,15 +111,16 @@
               <td th:text="${user.email}"></td>
               <td th:text="${user.enabled ? 'Yes' : 'No'}"></td>
               <!-- ACTIONS -->
-              <td>
+              <td sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')" class="d-flex justify-content-center gap-3">
                 <!-- Update -->
                 <a
                   th:href="@{/users/edit/{id} (id=${user.id})}"
-                  class="text-warning"
+                  class="text-warning mx-auto"
                   ><i class="fa-regular fa-pen-to-square"></i
                 ></a>
                 <!-- Delete -->
                 <a
+                  sec:authorize="hasAnyRole('ADMIN')"
                   href="#"
                   th:data-url="@{/users/delete/{id} (id=${user.id})}"
                   th:data-id-modal="'modalBorrarUser'"

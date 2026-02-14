@@ -12,6 +12,12 @@ import com.bd_scott.app_bd_scott.repository.UserRepository;
 
 @Configuration
 public class DataLoader {
+
+    private final UserRepository userRepository;
+
+    DataLoader(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 @Bean
     public CommandLineRunner initData(
         UserRepository userRepository,
@@ -25,7 +31,9 @@ public class DataLoader {
                 roleRepository.save(new Role("ROLE_USER"));
             }
 
-            // Crear Usuario Admin si no existe
+            //
+            // CREA usuarios: admin, moderator, user si no existen
+            //
             if (userRepository.findByUsername("admin").isEmpty()) {
                 User admin = new User();
                 admin.setName("admin");
@@ -39,7 +47,37 @@ public class DataLoader {
                 admin.addRole(rolAdmin);
 
                 userRepository.save(admin);
-                System.out.println("usuario ADMIN creado con pass: admin123");
+                System.out.println("usuario ADMIN creado con pass: admin1234");
+            }
+            if (userRepository.findByUsername("moderator").isEmpty()) {
+                User moderator = new User();
+                moderator.setName("moderator");
+                moderator.setUsername("moderator");
+                moderator.setEmail("moderator@moderator.com");
+                moderator.setPassword(passwordEncoder.encode("moderator1234"));
+                moderator.setEnabled(true);
+
+                // Asignar rol
+                Role rolModerator = roleRepository.findByNombre("ROLE_MODERATOR").get();
+                moderator.addRole(rolModerator);
+
+                userRepository.save(moderator);
+                System.out.println("usuario MODERATOR creado con pass: moderator1234");
+            }
+            if (userRepository.findByUsername("user").isEmpty()) {
+                User user = new User();
+                user.setName("user");
+                user.setUsername("user");
+                user.setEmail("user@user.com");
+                user.setPassword(passwordEncoder.encode("user1234"));
+                user.setEnabled(true);
+
+                // Asignar rol
+                Role rolUser = roleRepository.findByNombre("ROLE_USER").get();
+                user.addRole(rolUser);
+
+                userRepository.save(user);
+                System.out.println("usuario USER creado con pass: user1234");
             }
         };
     }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,7 +27,7 @@
     ></div>
 
     <!-- Boton -->
-    <div class="container my-2">
+    <div class="container my-2" sec:authorize="hasAnyRole('ADMIN')">
       <div class="row">
         <div class="col text-center">
           <a th:href="@{/emp/createEmp}" class="btn btn-primary"
@@ -101,15 +102,15 @@
         <table class="table table-striped">
           <thead>
             <tr class="table-primary">
-              <th>EMPNO</th>
-              <th>ENAME</th>
-              <th>JOB</th>
-              <th>MGR</th>
-              <th>SAL</th>
-              <th>COMM</th>
-              <th>DEPTNO</th>
-              <th>HIREDATE</th>
-              <th>ACTIONS</th>
+              <th class="text-center">EMPNO</th>
+              <th class="text-center">ENAME</th>
+              <th class="text-center">JOB</th>
+              <th class="text-center">MGR</th>
+              <th class="text-center">SAL</th>
+              <th class="text-center">COMM</th>
+              <th class="text-center">DEPTNO</th>
+              <th class="text-center">HIREDATE</th>
+              <th class="text-center" sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
@@ -130,7 +131,8 @@
               <td
                 th:text="${#temporals.format(emp.hiredate, 'dd/MM/yyyy')}"
               ></td>
-              <td>
+              <!-- ACTIONS -->
+              <td sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')" class="d-flex justify-content-center gap-3">
                 <!-- Update -->
                 <a
                   th:href="@{/emp/edit/{id} (id=${emp.empno})}"
@@ -139,6 +141,7 @@
                 ></a>
                 <!-- Delete -->
                 <a
+                  sec:authorize="hasAnyRole('ADMIN')"
                   href="#"
                   th:data-url="@{/emp/delete/{id} (id=${emp.empno})}"
                   th:data-id-modal="'modalBorrarEmp'"

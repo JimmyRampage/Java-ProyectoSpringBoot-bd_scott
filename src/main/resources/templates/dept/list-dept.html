@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,7 +28,7 @@
     ></div>
 
     <!-- Button Create Dept -->
-    <div class="container my-2">
+    <div class="container my-2" sec:authorize="hasAnyRole('ADMIN')">
       <div class="row">
         <div class="col text-center">
           <a th:href="@{/dept/createDept}" class="btn btn-primary"
@@ -97,10 +99,10 @@
         <table class="table table-striped">
           <thead>
             <tr class="table-primary">
-              <th>DPTNO</th>
-              <th>DNAME</th>
-              <th>LOC</th>
-              <th>ACTIONS</th>
+              <th class="text-center">DPTNO</th>
+              <th class="text-center">DNAME</th>
+              <th class="text-center">LOC</th>
+              <th class="text-center" sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
@@ -109,7 +111,7 @@
               <td th:text="${dept.dname}"></td>
               <td th:text="${dept.loc != null ? dept.loc : 'N/A'}"></td>
               <!-- ACTIONS -->
-              <td>
+              <td sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')" class="d-flex justify-content-center gap-3">
                 <!-- Update -->
                 <a
                   th:href="@{/dept/edit/{id} (id=${dept.deptno})}"
@@ -118,6 +120,7 @@
                 ></a>
                 <!-- Delete -->
                 <a
+                  sec:authorize="hasAnyRole('ADMIN')"
                   href="#"
                   th:data-url="@{/dept/delete/{id} (id=${dept.deptno})}"
                   th:data-id-modal="'modalBorrarDept'"

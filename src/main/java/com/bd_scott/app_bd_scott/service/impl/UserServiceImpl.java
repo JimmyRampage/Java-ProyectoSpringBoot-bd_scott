@@ -31,12 +31,12 @@ public class UserServiceImpl implements UserService {
         user.setUsername(userRegistrationDto.getUsername());
         user.setEmail(userRegistrationDto.getEmail());
         user.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
-        user.setEnabled(true);
+        user.setEnabled(false);
         user.addRole(
                 roleRepository
                         .findByNombre("ROLE_USER")
                         .orElseThrow(
-                                () -> new RuntimeException("Error: Rol USER no encontrado.")));
+                                () -> new IllegalStateException("Error: Rol USER no encontrado.")));
         return userRepository.save(user);
     }
 
