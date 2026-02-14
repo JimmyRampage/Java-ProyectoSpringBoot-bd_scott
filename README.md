@@ -12,6 +12,7 @@ Proyecto de practica para aprender y consolidar los conocimientos con SpringBoot
 4. [Lógica de Negocio (Service)](#parte-4-creando-el-servicio-interface-empservice-y-su-implementacion-empserviceimpl)
 5. [Capa Web (Controller)](#parte-5-el-controllador-empcontroller)
 6. [Frontend (Thymeleaf)](#parte-6-frontend-con-thymeleaf)
+7. [SpringSecurity](#parte-7-seguridad-con-spring-security)
 
 ---
 
